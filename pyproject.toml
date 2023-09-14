@@ -1,0 +1,18 @@
+[tool.poetry]
+name = "vocabularyservice"
+version = "0.1.0"
+description = ""
+authors = ["emely3h <emely3h@gmail.com>"]
+readme = "README.md"
+
+[tool.poetry.dependencies]
+python = "^3.10"
+chardet = "^5.2.0"
+pypdf2 = "1.26.0"
+spacy = "^3.6.1"
+python-dotenv = "^1.0.0"
+
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"
