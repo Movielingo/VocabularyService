@@ -1,7 +1,5 @@
 # VocabularyService
 
----
-
 ### 📖 About
 
 VocabularyService is a comprehensive tool designed to extract, classify, and store vocabulary from subtitle files. With the help of Spacy.io, it tags words based on their parts of speech, classifies them into CEFR levels (B2, C1, etc.), and leverages the DeepL API for context translations. The processed data is then stored in a database for further use.
