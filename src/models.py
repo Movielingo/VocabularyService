@@ -58,7 +58,8 @@ class Vocab:
     def to_dict(self):
         dict = self.__dict__
         dict['word_level'] = self.word_level.value
-        dict['word_type'] = self.word_type.value
+        # dict['word_type'] = self.word_type.value
+        dict['sentences'] = [sentence.to_dict() for sentence in self.sentences]
         return dict
 
 
