@@ -63,6 +63,6 @@ def extract_save_movie(FILENAME_WORDS_DICT, FILENAME_CONTRACTIONS_DICT, SUBTITLE
     movie_dict = _get_movie_dict(MOVIE_DESCRIPTION, MOVIE_GENRES, MOVIE_TITLE, vocab_dict)
 
     new_movie_ref = db.collection('movies').add(movie_dict)
-    print(f'Created new document for movie with ref: {new_movie_ref[0].id}')
+    print(f'Created new document for movie with ref: {new_movie_ref[1].id}')
     vocab_dict_all_levels = _get_vocab_all_levels(vocab_dict)
     _vocab_batch_write(vocab_dict_all_levels, new_movie_ref, db)
