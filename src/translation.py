@@ -5,7 +5,7 @@ from dotenv import load_dotenv
 
 load_dotenv()
 
-API_KEY = os.getenv('API_KEY')
+API_KEY = os.getenv('DEEPL_API_KEY')
 
 
 def translate_to_german(sentence):
@@ -22,8 +22,7 @@ def translate_to_german(sentence):
     translation = response.json()['translations'][0]['text']
     return translation
 
-
-translated_sentence = translate_to_german("Couple nights ago, I could've sworn I saw a picture move.")
-print(translated_sentence)
+# translated_sentence = translate_to_german("Couple nights ago, I could've sworn I saw a picture move.")
+# print(translated_sentence)
 
 # todo linguee for word translation

@@ -3,7 +3,7 @@ from datetime import datetime
 
 from models import VocabSentence, Vocab
 from translation import translate_to_german
-from word_level import get_word_cerf_level
+from word_level_contractions import get_word_cerf_level
 from word_tagging import get_lemma
 
 
@@ -40,6 +40,8 @@ def _extract_vocab(unique_words, sentence, timestamp, csrf_words, nlp, inf_contr
     words = _filter_words(sentence, inf_contractions)
 
     for word in words:
+        if word.isdigit():
+            continue
         lemma, word_type = get_lemma(sentence, word, nlp)
 
         # todo check if csrf word type and spicy word type match

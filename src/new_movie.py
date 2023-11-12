@@ -5,7 +5,7 @@ from firebase_admin import firestore
 
 from src.models import Movie, WordLevel
 from src.subtitle_words import extract_unique_words_subtitles
-from src.word_level import load_dict
+from src.word_level_contractions import load_dict
 
 
 def _get_movie_dict(MOVIE_DESCRIPTION, MOVIE_GENRES, MOVIE_TITLE, vocab_dict):
