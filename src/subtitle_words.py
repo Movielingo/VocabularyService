@@ -7,13 +7,14 @@ from word_level import get_word_cerf_level
 from word_tagging import get_lemma
 
 
-def get_tiemstamp(match: re.Match) -> datetime.time:
+def _get_tiemstamp(match: re.Match) -> datetime.time:
     hour_min_s = match.group(1).split(',')[0]
     return datetime.strptime(hour_min_s, '%H:%M:%S').time()
 
 
-def filter_words(line: str, inf_contractions) -> []:
-    excluded_words = {"harry", "potter", "mr", "ms", "mrs", "o", "w", "l", "", "\n", " ", "!", ".", "?", ",", '"'}
+def _filter_words(line: str, inf_contractions) -> []:
+    excluded_words = {"harry", "potter", "mr", "ms", "mrs", "o", "w", "l", "", "\n", " ", "!", ".", "?", ",", '"',
+                      "<", ">", "oculus", "reparo", "<i>oculus reparo.</i>", "prophet"}
     words = re.findall(r"(\w+'\w+|\w+|\W)", line)
     filtered_words = []
     for idx, word in enumerate(words):
@@ -31,12 +32,12 @@ def filter_words(line: str, inf_contractions) -> []:
     return filtered_words
 
 
-def extract_vocab(unique_words, sentence, timestamp, csrf_words, nlp, inf_contractions):
+def _extract_vocab(unique_words, sentence, timestamp, csrf_words, nlp, inf_contractions):
     sentence = sentence.replace('\n', '')
     translation = translate_to_german(sentence)
     vocab_sentence = VocabSentence(sentence, translation, timestamp)
 
-    words = filter_words(sentence, inf_contractions)
+    words = _filter_words(sentence, inf_contractions)
 
     for word in words:
         lemma, word_type = get_lemma(sentence, word, nlp)
@@ -47,9 +48,25 @@ def extract_vocab(unique_words, sentence, timestamp, csrf_words, nlp, inf_contra
             continue
         if lemma in unique_words[csrf_word.level.value]:
             unique_words[csrf_word.level.value][lemma].sentences.append(vocab_sentence)
-        unique_words[csrf_word.level.value][lemma] = Vocab(lemma=lemma, word_type=word_type, word_level=csrf_word.level,
-                                                           sentences=[vocab_sentence], voice_url=csrf_word.voice_url)
+        else:
+            unique_words[csrf_word.level.value][lemma] = Vocab(lemma=lemma, word_type=word_type,
+                                                               word_level=csrf_word.level,
+                                                               sentences=[vocab_sentence],
+                                                               voice_url=csrf_word.voice_url)
     return unique_words
+
+
+def _clear_sentence_from_tags(sentence):
+    sentence = sentence.replace("<i>", "")
+    sentence = sentence.replace("</i>", "")
+    sentence = sentence.replace("<b>", "")
+    sentence = sentence.replace("</b>", "")
+    sentence = sentence.replace("<u>", "")
+    sentence = sentence.replace("</u>", "")
+    sentence = sentence.replace("<s>", "")
+    sentence = sentence.replace("</s>", "")
+    sentence = sentence.replace("<br>", "")
+    return sentence
 
 
 def extract_unique_words_subtitles(srt_file_path, csrf_words, nlp, inf_contractions):
@@ -68,7 +85,7 @@ def extract_unique_words_subtitles(srt_file_path, csrf_words, nlp, inf_contracti
             continue
         match = timestamp_re.search(line)
         if match:
-            timestamp = get_tiemstamp(match)
+            timestamp = _get_tiemstamp(match)
             skip = False
         elif re.match(r"^\d+$", line.strip()) or \
                 re.match(r"^\d{2}:\d{2}:\d{2},\d{3} --> \d{2}:\d{2}:\d{2},\d{3}$", line.strip()) or \
@@ -76,12 +93,12 @@ def extract_unique_words_subtitles(srt_file_path, csrf_words, nlp, inf_contracti
             skip = False
             continue
         else:
-
             sentence = line
 
-            if lines[idx + 1] is not '\n':
+            if lines[idx + 1] != '\n':
                 sentence += " " + lines[idx + 1]
                 skip = True
-            unique_words = extract_vocab(unique_words, sentence, timestamp, csrf_words, nlp, inf_contractions)
+            sentence = _clear_sentence_from_tags(sentence)
+            unique_words = _extract_vocab(unique_words, sentence, timestamp, csrf_words, nlp, inf_contractions)
 
     return unique_words
