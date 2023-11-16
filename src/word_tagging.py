@@ -1,3 +1,6 @@
+from src.models import WordType
+
+
 def get_lemma(sentence, word, nlp):
     doc = nlp(sentence)
     lemma = None
@@ -9,4 +12,4 @@ def get_lemma(sentence, word, nlp):
             break
     if not lemma:
         raise ValueError('Lemma not found!')
-    return lemma, word_type
+    return lemma, WordType[word_type]

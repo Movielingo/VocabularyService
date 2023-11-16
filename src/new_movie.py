@@ -39,12 +39,30 @@ def _vocab_batch_write(vocab_dict_all_levels, new_movie_ref, db):
             batch_size = 0
 
         doc_ref = vocab_collection_ref.document()
-        batch.set(doc_ref, vocab_value.to_dict())
+        batch.set(doc_ref, _convert_keys_to_camel_case(vocab_value.to_dict()))
         batch_size += 1
 
     if batch_size > 0:
         batch.commit()
     print('Done saving vocabulary.')
+
+
+def _snake_to_camel(snake_str):
+    components = snake_str.split('_')
+    return components[0] + ''.join(x.title() for x in components[1:])
+
+
+def _convert_keys_to_camel_case(obj):
+    if isinstance(obj, dict):
+        new_dict = {}
+        for key, value in obj.items():
+            new_key = _snake_to_camel(key)
+            new_dict[new_key] = _convert_keys_to_camel_case(value)
+        return new_dict
+    elif isinstance(obj, list):
+        return [_convert_keys_to_camel_case(item) for item in obj]
+    else:
+        return obj
 
 
 def extract_save_movie(FILENAME_WORDS_DICT, FILENAME_CONTRACTIONS_DICT, SUBTITLE_FILE, MOVIE_DESCRIPTION,
@@ -61,8 +79,9 @@ def extract_save_movie(FILENAME_WORDS_DICT, FILENAME_CONTRACTIONS_DICT, SUBTITLE
     print('Done extracting vocab from subtitle file.')
 
     movie_dict = _get_movie_dict(MOVIE_DESCRIPTION, MOVIE_GENRES, MOVIE_TITLE, vocab_dict)
+    movie_dict_camel_case = _convert_keys_to_camel_case(movie_dict)
 
-    new_movie_ref = db.collection('movies').add(movie_dict)
+    new_movie_ref = db.collection('movies').add(movie_dict_camel_case)
     print(f'Created new document for movie with ref: {new_movie_ref[1].id}')
     vocab_dict_all_levels = _get_vocab_all_levels(vocab_dict)
     _vocab_batch_write(vocab_dict_all_levels, new_movie_ref, db)

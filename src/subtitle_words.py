@@ -14,7 +14,7 @@ def _get_tiemstamp(match: re.Match) -> datetime.time:
 
 def _filter_words(line: str, inf_contractions) -> []:
     excluded_words = {"harry", "potter", "mr", "ms", "mrs", "o", "w", "l", "", "\n", " ", "!", ".", "?", ",", '"',
-                      "<", ">", "oculus", "reparo", "<i>oculus reparo.</i>", "prophet"}
+                      "<", ">", "oculus", "reparo", "<i>oculus reparo.</i>", "prophet", "dr", "..."}
     words = re.findall(r"(\w+'\w+|\w+|\W)", line)
     filtered_words = []
     for idx, word in enumerate(words):
@@ -75,7 +75,7 @@ def extract_unique_words_subtitles(srt_file_path, csrf_words, nlp, inf_contracti
     unique_words = {'a1': {}, 'a2': {}, 'b1': {}, 'b2': {}, 'c1': {}, 'c2': {}}
 
     timestamp = None
-    with open(srt_file_path, 'r', encoding='utf-8') as file:
+    with open(srt_file_path, 'r', encoding='utf-8-sig') as file:  # todo encoding='utf-8' differences?
         lines = file.readlines()
     timestamp_re = re.compile(r'(\d{2}:\d{2}:\d{2},\d{3}) --> (\d{2}:\d{2}:\d{2},\d{3})')
     skip = False
@@ -97,9 +97,10 @@ def extract_unique_words_subtitles(srt_file_path, csrf_words, nlp, inf_contracti
         else:
             sentence = line
 
-            if lines[idx + 1] != '\n':
-                sentence += " " + lines[idx + 1]
-                skip = True
+            if idx != (len(lines) - 1):
+                if lines[idx + 1] != '\n':
+                    sentence += " " + lines[idx + 1]
+                    skip = True
             sentence = _clear_sentence_from_tags(sentence)
             unique_words = _extract_vocab(unique_words, sentence, timestamp, csrf_words, nlp, inf_contractions)
 

@@ -27,28 +27,29 @@ class WordLevel(Enum):
 
 class WordType(Enum):
     VERB = 'verb'
-    ADVERB = 'adverb'
+    ADV = 'adv'
     NOUN = 'noun'
-    ADJECTIVE = 'adjective'
-    OBJECTIVE = 'objective'
-    PREPOSITION = 'preposition'
-    CONJUNCTION = 'conjunction'
-    ARTICLE = 'indefinite article'
-    EXCLAMATION = 'exclamation'
-    DETERMINER = 'determiner'
-    PRONOUN = 'pronoun'
-    AUXILIARY_VERB = 'auxiliary verb'
-    NUMBER = 'number'
-    MODAL_VERB = 'modal verb'
-    LINKING_VERB = 'linking verb'
-    DEFINITE_ARTICLE = 'definite article'
-    INFINITIVE_MARKER = 'infinitive marker'
-    ORDINAL_NUMBER = 'ordinal number'
+    ADJ = 'adj'
+    ADP = 'adp'
+    CCONJ = 'cconj'
+    INT = 'int'
+    PART = 'part'
+    PROPN = 'propn'
+    PUNCT = 'punct'
+    SCONJ = 'sconj'
+    SYM = 'sym'
+    DET = 'det'
+    PRON = 'pron'
+    NUM = 'num'
+    AUX = 'aux'
+    INTJ = 'intj'
+    X = 'x'
 
 
 class Vocab:
 
-    def __init__(self, lemma: str, word_level: WordLevel, word_type, sentences: List[VocabSentence], voice_url: str):
+    def __init__(self, lemma: str, word_level: WordLevel, word_type: WordType, sentences: List[VocabSentence],
+                 voice_url: str):
         self.lemma = lemma
         self.word_level = word_level
         self.word_type = word_type
@@ -58,14 +59,14 @@ class Vocab:
     def to_dict(self):
         dict = self.__dict__
         dict['word_level'] = self.word_level.value
-        # dict['word_type'] = self.word_type.value
+        dict['word_type'] = self.word_type.value
         dict['sentences'] = [sentence.to_dict() for sentence in self.sentences]
         return dict
 
 
 class CSRFWord:
 
-    def __init__(self, word: str, level: WordLevel, pos: WordType, definition_url: str, voice_url: str):
+    def __init__(self, word: str, level: WordLevel, pos: str, definition_url: str, voice_url: str):
         self.word = word
         self.level = level
         self.pos = pos
@@ -85,7 +86,7 @@ class MovieGenre(Enum):
     HORROR = 'horror'
     DOCUMENTARY = 'documentary'
     ROMANCE = 'romance'
-    SCIENCE_FICTION = 'science fiction'
+    SCIENCE_FICTION = 'scienceFiction'
     THRILLER = 'thriller'
     DRAMA = 'drama'
     FAMILY = 'family'

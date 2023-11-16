@@ -1,7 +1,7 @@
 import csv
 import pickle
 
-from models import CSRFWord, WordLevel, WordType
+from models import CSRFWord, WordLevel
 
 
 def extract_words_from_csv(file_path):
@@ -10,7 +10,7 @@ def extract_words_from_csv(file_path):
         reader = csv.reader(csvfile)
         next(reader)
         for row in reader:
-            word_obj = CSRFWord(word=row[0], level=WordLevel(row[1]), pos=WordType(row[2]), definition_url=row[3],
+            word_obj = CSRFWord(word=row[0], level=WordLevel(row[1]), pos=row[2], definition_url=row[3],
                                 voice_url=row[4])
             words_dict[row[0]] = word_obj
     return words_dict
@@ -43,12 +43,12 @@ def create_constractions_dict(filename: str):
                 break
             else:
                 dict[row[0]] = row[1]
-    save_words_dict(dict, 'data/contractions-dict.pkl')
+    save_words_dict(dict, 'data/contractions_dict.pkl')
 
 
 # get_word_cerf_level('I')
 
-# words_dict_from_csv = extract_words_from_csv("oxford-5k.csv")
+words_dict_from_csv = extract_words_from_csv("data/oxford_5k.csv")
 
-create_constractions_dict('data/informal_contractions.csv')
-# save_words_dict(words_dict_from_csv, FILENAME_WORDS_DICT)
+# create_constractions_dict('data/informal_contractions.csv')
+save_words_dict(words_dict_from_csv, 'data/cerf_words_dict.pkl')
