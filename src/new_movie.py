@@ -67,7 +67,7 @@ def _convert_keys_to_camel_case(obj):
 
 def extract_save_movie(FILENAME_WORDS_DICT, FILENAME_CONTRACTIONS_DICT, SUBTITLE_FILE, MOVIE_DESCRIPTION,
                        MOVIE_GENRES, MOVIE_TITLE):
-    cred = credentials.Certificate('data/db_serviceAccount.json')
+    cred = credentials.Certificate('conf/db_serviceAccount.json.example')
     firebase_admin.initialize_app(cred)
     db = firestore.client()
     nlp = spacy.load("en_core_web_sm")

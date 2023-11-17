@@ -2,3 +2,4 @@ __pycache__
 .env
 .idea
 *.srt
+src/conf/db_serviceAccount.json

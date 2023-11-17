@@ -2,7 +2,10 @@
 
 ### 📖 About
 
-VocabularyService is a comprehensive tool designed to extract, classify, and store vocabulary from subtitle files. With the help of Spacy.io, it tags words based on their parts of speech, classifies them into CEFR levels (B2, C1, etc.), and leverages the DeepL API for context translations. The processed data is then stored in a database for further use.
+VocabularyService is a comprehensive tool designed to extract, classify, and store vocabulary from subtitle files.
+With the help of Spacy.io, it tags words based on their parts of speech, classifies them into CEFR levels (B2, C1,
+etc.), and leverages the DeepL API for context translations. The processed data is then stored in a firestore database
+for further use.
 
 ### 🚀 Features
 
@@ -18,7 +21,7 @@ VocabularyService is a comprehensive tool designed to extract, classify, and sto
    ```bash
    git clone https://github.com/yourusername/VocabularyService.git
    ```
-   
+
 2. Navigate to the project directory:
    ```bash
    cd VocabularyService
@@ -30,28 +33,26 @@ VocabularyService is a comprehensive tool designed to extract, classify, and sto
    python -m spacy download en_core_web_sm
    ```
 
-### 🖥️ Usage
+### ️🖥 Usage
 
-1. **Extract Words from Subtitle Files**:
+1. **Extract Words from Subtitle Files and store movie and vocabularies in firestore**
+
+   => adjust all constants (movie title, movie description, ...) before running)
    ```bash
-   python subtitle_words.py [PATH_TO_SUBTITLE_FILE]
+   python main.py
    ```
 
-2. **Tag Words with Spacy.io**:
-   ```bash
-   python word_tagging.py
-   ```
+### ⚙️ How It Works
 
-3. **Classify Words into CEFR Levels**:
-   ```bash
-   python word_level.py
-   ```
-
-4. **Translate Words with DeepL**:
-   ```bash
-   python translation.py
-   ```
+- Reading subtitle files sentence by sentence.
+- Extracting unique, meaningful words while excluding names and special terms.
+- Deriving the lemma, word type, and CEFR level for each word.
+- Creating or updating the vocabulary dictionary with each new word, its context sentence, translation, and timestamp.
+- Storing the movie document and all vocabulary in Firestore, utilizing batch writes for efficiency.
 
 ### 🔧 Configuration
-  
-- Make sure to provide your DeepL API key in the appropriate configuration file for translation services.
+
+- Make sure to provide your DeepL API key in the appropriate `.env` file in the `/conf` folder for translation
+  services.
+- Make sure to provide a db_serviceAccount.json configuration file in the `/conf` folder be able to connect to
+  your firestore db.

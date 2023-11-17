@@ -3,7 +3,7 @@ import os
 import requests
 from dotenv import load_dotenv
 
-load_dotenv()
+load_dotenv('conf/.env')
 
 API_KEY = os.getenv('DEEPL_API_KEY')
 
