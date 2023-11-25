@@ -11,5 +11,7 @@ def get_lemma(sentence, word, nlp):
             word_type = token.pos_
             break
     if not lemma:
-        raise ValueError('Lemma not found!')
+        print(f'lemma not found {word}: {sentence}')
+        # raise ValueError('Lemma not found!') #todo error handling
+        return None, None
     return lemma, WordType[word_type]

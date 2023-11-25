@@ -1,36 +1,98 @@
-from src.models import MovieGenre
-from src.new_movie import extract_save_movie
+from src.models import MediaGenre, MediaLevel, Series, Episode
+from src.new_movie import extract_save_media
 
-FILENAME_WORDS_DICT = 'data/cerf_words_dict.pkl'
-FILENAME_CONTRACTIONS_DICT = 'data/contractions_dict.pkl'
-SUBTITLE_FILE = 'data/half_blood_prince.srt'
-MOVIE_TITLE = 'Harry Potter and the Half-Blood Prince'
-MOVIE_DESCRIPTION = ("As Harry begins his sixth year at Hogwarts, he discovers an old book marked as 'Property of the "
-                     "Half-Blood Prince', and begins to learn more about Lord Voldemort's dark past.")
-MOVIE_GENRES = [MovieGenre.FAMILY, MovieGenre.FANTASY]
-extract_save_movie(FILENAME_WORDS_DICT, FILENAME_CONTRACTIONS_DICT, SUBTITLE_FILE, MOVIE_DESCRIPTION,
-                   MOVIE_GENRES, MOVIE_TITLE)
+# # Harry potter 6
+# subtitle_file = 'data/half_blood_prince.srt'
+# collection_name = "EnglishMedia"
+# title = 'Harry Potter and the Half-Blood Prince'
+# description = ("As Harry begins his sixth year at Hogwarts, he discovers an old book marked as 'Property of the "
+#                "Half-Blood Prince', and begins to learn more about Lord Voldemort's dark past.")
+# genres = [MediaGenre.FAMILY, MediaGenre.FANTASY, MediaGenre.ADVENTURE]
+# level = MediaLevel.EASY
+# is_series = False
+# translation_language = "german"
+# length_min = 153
+# director = "David Yates"
+# release = 2009
+# media_info = MovieInfo(description=description, is_series=is_series, title=title, genres=genres,
+#                        level=level, translation_language=translation_language, length_min=length_min,
+#                        director=director, release=release)
+# extract_save_movie(subtitle_file, media_info, collection_name)
 
-# FILENAME_WORDS_DICT = 'data/cerf_words_dict.pkl'
-# FILENAME_CONTRACTIONS_DICT = 'data/contractions_dict.pkl'
-# SUBTITLE_FILE = 'data/chamber_of_secrets.srt'
-# MOVIE_TITLE = 'Harry Potter and the Chamber of Secrets'
-# MOVIE_DESCRIPTION = (
-#     "An ancient prophecy seems to be coming true when a mysterious presence begins stalking the "
-#     "corridors of a school of magic and leaving its victims paralyzed.")
-# MOVIE_GENRES = [MovieGenre.FAMILY, MovieGenre.FANTASY]
-# extract_save_movie(FILENAME_WORDS_DICT, FILENAME_CONTRACTIONS_DICT, SUBTITLE_FILE, MOVIE_DESCRIPTION,
-#                    MOVIE_GENRES, MOVIE_TITLE)
+# # Harry Potter 2
+# subtitle_file = 'data/chamber_of_secrets.srt'
+# collection_name = "EnglishMedia"
+#
+# title = 'Harry Potter and the Chamber of Secrets'
+# description = ("An ancient prophecy seems to be coming true when a mysterious presence begins stalking the "
+#                "corridors of a school of magic and leaving its victims paralyzed.")
+# genres = [MediaGenre.FAMILY, MediaGenre.FANTASY, MediaGenre.ADVENTURE]
+# level = MediaLevel.EASY
+# is_series = False
+# translation_language = "german"
+# length_min = 161
+# director = "Chris Columbus"
+# release = 2002
+# media_info = MovieInfo(description=description, is_series=is_series, title=title, genres=genres,
+#                        level=level, translation_language=translation_language, length_min=length_min,
+#                        director=director, release=release)
+#
+# extract_save_movie(subtitle_file, media_info, collection_name)
 
-# FILENAME_WORDS_DICT = 'data/cerf_words_dict.pkl'
-# FILENAME_CONTRACTIONS_DICT = 'data/contractions_dict.pkl'
-# SUBTITLE_FILE = 'data/great_gatspy.srt'
-# MOVIE_TITLE = 'The Great Gatsby'
-# MOVIE_DESCRIPTION = ("A writer and wall street trader, Nick Carraway, finds himself drawn to the past and lifestyle "
-#                      "of his mysterious millionaire neighbor, Jay Gatsby, amid the riotous parties of the Jazz Age.")
-# MOVIE_GENRES = [MovieGenre.SCIENCE_FICTION, MovieGenre.ROMANCE]
-# extract_save_movie(FILENAME_WORDS_DICT, FILENAME_CONTRACTIONS_DICT, SUBTITLE_FILE, MOVIE_DESCRIPTION,
-#                    MOVIE_GENRES, MOVIE_TITLE)
+
+# # Great Gatsby
+# subtitle_file = 'data/test.srt'
+# collection_name = "EnglishMedia"
+#
+# title = 'The Great Gatsby'
+# description = ("A writer and wall street trader, Nick Carraway, finds himself drawn to the past and lifestyle "
+#                "of his mysterious millionaire neighbor, Jay Gatsby, amid the riotous parties of the Jazz Age.")
+# genres = [MediaGenre.SCIENCE_FICTION, MediaGenre.ROMANCE]
+# level = MediaLevel.ADVANCED
+# is_series = False
+# translation_language = "german"
+# length_min = 143
+# director = "Baz Luhrmann"
+# release = 2013
+# media_info = MovieInfo(description=description, is_series=is_series, title=title, genres=genres,
+#                        level=level, translation_language=translation_language, length_min=length_min,
+#                        director=director, release=release)
+#
+# extract_save_media(subtitle_file, media_info, collection_name)
+
+# Friends Season 1 Episode 1
+subtitle_file = 'data/test.srt'
+collection_name = "EnglishMedia"
+
+title = 'Friends'
+description = """Follows the personal and professional lives of six twenty to thirty year-old friends living in the "
+               "Manhattan borough of New York City."""
+
+genres = [MediaGenre.COMEDY, MediaGenre.ROMANCE]
+is_series = True
+translation_language = "german"
+release_first_episode = 1994
+release_last_episode = 2005
+
+episode = 2
+season = 1
+episode_title = "The One asfasdfa"
+episode_description = """asfasdf"""
+
+episode_1 = Episode(episode=1, season=1, title=episode_title, description=episode_description,
+                    level=MediaLevel.EASY)
+
+series = Series(genres=genres, is_series=is_series, title=title, description=description,
+                release_last_episode=release_last_episode, release_first_episode=release_first_episode,
+                translation_language=translation_language, episode_details=episode_1)
+## adding series including episode
+extract_save_media(subtitle_file, series, collection_name)
+## adding episode to series
+# extract_save_media(subtitle_file, episode_1, collection_name, 'DjwWmIXMmwWw0MlPQXGd')
+
+
+# todo movie, series vocab indexes
+
 
 # todo oxford cerf list does not contain c2 vocab
 

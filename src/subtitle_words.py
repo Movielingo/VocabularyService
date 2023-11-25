@@ -38,15 +38,19 @@ def _extract_vocab(unique_words, sentence, timestamp, csrf_words, nlp, inf_contr
     vocab_sentence = VocabSentence(sentence, translation, timestamp)
 
     words = _filter_words(sentence, inf_contractions)
-
+    lemma_not_found_counter = 0
+    csrf_not_found_counter = 0
     for word in words:
         if word.isdigit():
             continue
         lemma, word_type = get_lemma(sentence, word, nlp)
-
+        if not lemma:
+            lemma_not_found_counter += 1
+            continue
         # todo check if csrf word type and spicy word type match
         csrf_word = get_word_cerf_level(lemma, csrf_words)
         if not csrf_word:
+            csrf_not_found_counter += 1
             continue
         if lemma in unique_words[csrf_word.level.value]:
             unique_words[csrf_word.level.value][lemma].sentences.append(vocab_sentence)
@@ -55,7 +59,7 @@ def _extract_vocab(unique_words, sentence, timestamp, csrf_words, nlp, inf_contr
                                                                word_level=csrf_word.level,
                                                                sentences=[vocab_sentence],
                                                                voice_url=csrf_word.voice_url)
-    return unique_words
+    return unique_words, lemma_not_found_counter, csrf_not_found_counter
 
 
 def _clear_sentence_from_tags(sentence):
@@ -73,7 +77,8 @@ def _clear_sentence_from_tags(sentence):
 
 def extract_unique_words_subtitles(srt_file_path, csrf_words, nlp, inf_contractions):
     unique_words = {'a1': {}, 'a2': {}, 'b1': {}, 'b2': {}, 'c1': {}, 'c2': {}}
-
+    lemma_not_found_counter = 0
+    csrf_not_found_counter = 0
     timestamp = None
     with open(srt_file_path, 'r', encoding='utf-8-sig') as file:  # todo encoding='utf-8' differences?
         lines = file.readlines()
@@ -102,6 +107,12 @@ def extract_unique_words_subtitles(srt_file_path, csrf_words, nlp, inf_contracti
                     sentence += " " + lines[idx + 1]
                     skip = True
             sentence = _clear_sentence_from_tags(sentence)
-            unique_words = _extract_vocab(unique_words, sentence, timestamp, csrf_words, nlp, inf_contractions)
+            unique_words, lemma_errors, csrf_errors = _extract_vocab(unique_words, sentence, timestamp, csrf_words,
+                                                                     nlp, inf_contractions)
+            lemma_not_found_counter = lemma_not_found_counter + lemma_errors
+            csrf_not_found_counter = csrf_not_found_counter + csrf_errors
+
+    print(f'Total amount of <lemma not found words>: {lemma_not_found_counter}')
+    print(f'Total amount of <csrf word not found words>: {csrf_not_found_counter}')
 
     return unique_words

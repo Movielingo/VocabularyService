@@ -3,17 +3,10 @@ import spacy
 from firebase_admin import credentials
 from firebase_admin import firestore
 
-from src.models import Movie, WordLevel
+from src.db_service import save_movie_to_db, save_series_to_db, vocab_batch_write, save_episode_to_db
+from src.models import MediaInfo, MovieInfo, Series, Episode
 from src.subtitle_words import extract_unique_words_subtitles
-from src.word_level_contractions import load_dict
-
-
-def _get_movie_dict(MOVIE_DESCRIPTION, MOVIE_GENRES, MOVIE_TITLE, vocab_dict):
-    return Movie(description=MOVIE_DESCRIPTION, genres=MOVIE_GENRES, title=MOVIE_TITLE,
-                 a1_vocab_count=len(vocab_dict[WordLevel.A1.value]), a2_vocab_count=len(vocab_dict[WordLevel.A2.value]),
-                 b1_vocab_count=len(vocab_dict[WordLevel.B1.value]), b2_vocab_count=len(vocab_dict[WordLevel.B2.value]),
-                 c1_vocab_count=len(vocab_dict[WordLevel.C1.value]),
-                 c2_vocab_count=len(vocab_dict[WordLevel.C2.value])).to_dict()
+from src.word_level_contractions import load_csrf_dict, load_contractions_dict
 
 
 def _get_vocab_all_levels(vocab_dict):
@@ -27,61 +20,34 @@ def _get_vocab_all_levels(vocab_dict):
     return vocab_dict_all_levels
 
 
-def _vocab_batch_write(vocab_dict_all_levels, new_movie_ref, db):
-    batch = db.batch()
-    batch_size = 0
-    vocab_collection_ref = new_movie_ref[1].collection('vocabulary')
-
-    for vocab_key, vocab_value in vocab_dict_all_levels.items():
-        if batch_size == 500:
-            batch.commit()
-            batch = db.batch()
-            batch_size = 0
-
-        doc_ref = vocab_collection_ref.document()
-        batch.set(doc_ref, _convert_keys_to_camel_case(vocab_value.to_dict()))
-        batch_size += 1
-
-    if batch_size > 0:
-        batch.commit()
-    print('Done saving vocabulary.')
-
-
-def _snake_to_camel(snake_str):
-    components = snake_str.split('_')
-    return components[0] + ''.join(x.title() for x in components[1:])
-
-
-def _convert_keys_to_camel_case(obj):
-    if isinstance(obj, dict):
-        new_dict = {}
-        for key, value in obj.items():
-            new_key = _snake_to_camel(key)
-            new_dict[new_key] = _convert_keys_to_camel_case(value)
-        return new_dict
-    elif isinstance(obj, list):
-        return [_convert_keys_to_camel_case(item) for item in obj]
-    else:
-        return obj
-
-
-def extract_save_movie(FILENAME_WORDS_DICT, FILENAME_CONTRACTIONS_DICT, SUBTITLE_FILE, MOVIE_DESCRIPTION,
-                       MOVIE_GENRES, MOVIE_TITLE):
-    cred = credentials.Certificate('conf/db_serviceAccount.json.example')
+def extract_save_media(subtitle_file, media_info: [MediaInfo, Episode], collection_name: str, series_ref: str = None):
+    cred = credentials.Certificate('conf/db_serviceAccount.json')
     firebase_admin.initialize_app(cred)
     db = firestore.client()
     nlp = spacy.load("en_core_web_sm")
+    episode = None
+    season = None
+    csrf_words = load_csrf_dict()
+    formal_contractions = load_contractions_dict()
 
-    csrf_words = load_dict(FILENAME_WORDS_DICT)
-    formal_contractions = load_dict(FILENAME_CONTRACTIONS_DICT)
-
-    vocab_dict = extract_unique_words_subtitles(SUBTITLE_FILE, csrf_words, nlp, formal_contractions)
+    vocab_dict = extract_unique_words_subtitles(subtitle_file, csrf_words, nlp, formal_contractions)
     print('Done extracting vocab from subtitle file.')
 
-    movie_dict = _get_movie_dict(MOVIE_DESCRIPTION, MOVIE_GENRES, MOVIE_TITLE, vocab_dict)
-    movie_dict_camel_case = _convert_keys_to_camel_case(movie_dict)
+    if isinstance(media_info, MovieInfo):
+        media_ref = save_movie_to_db(media_info, collection_name, vocab_dict, db)
 
-    new_movie_ref = db.collection('movies').add(movie_dict_camel_case)
-    print(f'Created new document for movie with ref: {new_movie_ref[1].id}')
+    elif isinstance(media_info, Series):
+        episode = media_info.episode_details.episode
+        season = media_info.episode_details.season
+        media_ref = save_series_to_db(media_info, collection_name, vocab_dict, db)
+    elif isinstance(media_info, Episode):
+        episode = media_info.episode
+        season = media_info.season
+        media_ref = save_episode_to_db(media_info, series_ref, collection_name, vocab_dict, db)
+
+    else:
+        raise Exception('MediaInfo type not supported.')
+    print(f'Created new document for movie with ref: {media_ref.id}')
     vocab_dict_all_levels = _get_vocab_all_levels(vocab_dict)
-    _vocab_batch_write(vocab_dict_all_levels, new_movie_ref, db)
+
+    vocab_batch_write(vocab_dict_all_levels, media_ref, db, season, episode)
