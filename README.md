@@ -1,4 +1,4 @@
-# VocabularyService
+# Vocabulary Service
 
 ### 📖 About
 
