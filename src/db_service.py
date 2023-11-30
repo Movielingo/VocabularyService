@@ -21,9 +21,27 @@ def _convert_keys_to_camel_case(obj):
         return obj
 
 
+def _string_to_trigrams(media_title: str) -> dict[str, bool]:
+    media_title = media_title.lower()
+    trigrams = {}
+    for i in range(len(media_title) - 2):
+        trigram = media_title[i:i + 3]
+        trigrams[trigram] = True
+    return trigrams
+
+
+def _add_trigrams_to_media(media_dict: dict) -> dict:
+    trigrams = _string_to_trigrams(media_dict['title'])
+    for trigram in trigrams:
+        media_dict[trigram] = True
+    return media_dict
+
+
 def save_movie_to_db(media_info: MovieInfo, collection_name: str, vocab_dict: dict, db) -> DocumentReference:
     movie_dict = Movie.get_movie_dict(media_info, vocab_dict).to_dict()
+    movie_dict = _add_trigrams_to_media(movie_dict)
     movie_dict_camel_case = _convert_keys_to_camel_case(movie_dict)
+
     new_movie_ref = db.collection(collection_name).add(movie_dict_camel_case)
     return new_movie_ref[1]
 
@@ -31,6 +49,7 @@ def save_movie_to_db(media_info: MovieInfo, collection_name: str, vocab_dict: di
 def save_series_to_db(series: Series, collection_name: str, vocab_dict: dict, db) -> DocumentReference:
     series.add_vocab_count_to_episode(vocab_dict)
     series_dict = series.to_dict()
+    series_dict = _add_trigrams_to_media(series_dict)
     series_dict_camel_case = _convert_keys_to_camel_case(series_dict)
     new_series_ref = db.collection(collection_name).add(series_dict_camel_case)
     return new_series_ref[1]
@@ -51,7 +70,7 @@ def save_episode_to_db(episode: Episode, series_id: str, collection_name: str, v
 def vocab_batch_write(vocab_dict_all_levels, new_media_ref, db, series: int = None, episode: int = None):
     batch = db.batch()
     batch_size = 0
-    vocab_collection_ref = new_media_ref.collection('vocabulary')
+    vocab_collection_ref = new_media_ref.collection('Vocabularies')
 
     for vocab_key, vocab_value in vocab_dict_all_levels.items():
         if batch_size == 500:

@@ -1,8 +1,8 @@
-from src.models import MediaGenre, MediaLevel, Series, Episode
+from src.models import MediaGenre, MediaLevel, Episode, Series
 from src.new_movie import extract_save_media
 
 # # Harry potter 6
-# subtitle_file = 'data/half_blood_prince.srt'
+# subtitle_file = 'data/test.srt'
 # collection_name = "EnglishMedia"
 # title = 'Harry Potter and the Half-Blood Prince'
 # description = ("As Harry begins his sixth year at Hogwarts, he discovers an old book marked as 'Property of the "
@@ -17,10 +17,10 @@ from src.new_movie import extract_save_media
 # media_info = MovieInfo(description=description, is_series=is_series, title=title, genres=genres,
 #                        level=level, translation_language=translation_language, length_min=length_min,
 #                        director=director, release=release)
-# extract_save_movie(subtitle_file, media_info, collection_name)
+# extract_save_media(subtitle_file, media_info, collection_name)
 
 # # Harry Potter 2
-# subtitle_file = 'data/chamber_of_secrets.srt'
+# subtitle_file = 'data/test.srt'
 # collection_name = "EnglishMedia"
 #
 # title = 'Harry Potter and the Chamber of Secrets'
@@ -37,8 +37,7 @@ from src.new_movie import extract_save_media
 #                        level=level, translation_language=translation_language, length_min=length_min,
 #                        director=director, release=release)
 #
-# extract_save_movie(subtitle_file, media_info, collection_name)
-
+# extract_save_media(subtitle_file, media_info, collection_name)
 
 # # Great Gatsby
 # subtitle_file = 'data/test.srt'
@@ -76,8 +75,8 @@ release_last_episode = 2005
 
 episode = 2
 season = 1
-episode_title = "The One asfasdfa"
-episode_description = """asfasdf"""
+episode_title = "The Second One"
+episode_description = """bla bla bla."""
 
 episode_1 = Episode(episode=1, season=1, title=episode_title, description=episode_description,
                     level=MediaLevel.EASY)
@@ -86,13 +85,9 @@ series = Series(genres=genres, is_series=is_series, title=title, description=des
                 release_last_episode=release_last_episode, release_first_episode=release_first_episode,
                 translation_language=translation_language, episode_details=episode_1)
 ## adding series including episode
-extract_save_media(subtitle_file, series, collection_name)
+# extract_save_media(subtitle_file, series, collection_name)
 ## adding episode to series
-# extract_save_media(subtitle_file, episode_1, collection_name, 'DjwWmIXMmwWw0MlPQXGd')
-
-
-# todo movie, series vocab indexes
-
+extract_save_media(subtitle_file, episode_1, collection_name, 'TOg24pwrOHGHb9vkAzXB')
 
 # todo oxford cerf list does not contain c2 vocab
 
