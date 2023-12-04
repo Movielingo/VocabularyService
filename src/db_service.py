@@ -1,3 +1,4 @@
+from firebase_admin import storage
 from google.cloud.firestore import ArrayUnion, DocumentReference
 
 from src.models import Movie, MovieInfo, Series, Episode
@@ -37,29 +38,33 @@ def _add_trigrams_to_media(media_dict: dict) -> dict:
     return media_dict
 
 
-def save_movie_to_db(media_info: MovieInfo, collection_name: str, vocab_dict: dict, db) -> DocumentReference:
+def save_movie_to_db(media_info: MovieInfo, collection_name: str, vocab_dict: dict, img_ref: str,
+                     db) -> DocumentReference:
     movie_dict = Movie.get_movie_dict(media_info, vocab_dict).to_dict()
     movie_dict = _add_trigrams_to_media(movie_dict)
     movie_dict_camel_case = _convert_keys_to_camel_case(movie_dict)
+    movie_dict_camel_case['imgRef'] = img_ref
 
     new_movie_ref = db.collection(collection_name).add(movie_dict_camel_case)
     return new_movie_ref[1]
 
 
-def save_series_to_db(series: Series, collection_name: str, vocab_dict: dict, db) -> DocumentReference:
+def save_series_to_db(series: Series, collection_name: str, vocab_dict: dict, img_ref: str, db) -> DocumentReference:
     series.add_vocab_count_to_episode(vocab_dict)
     series_dict = series.to_dict()
     series_dict = _add_trigrams_to_media(series_dict)
     series_dict_camel_case = _convert_keys_to_camel_case(series_dict)
+    series_dict_camel_case['imgRef'] = img_ref
     new_series_ref = db.collection(collection_name).add(series_dict_camel_case)
     return new_series_ref[1]
 
 
-def save_episode_to_db(episode: Episode, series_id: str, collection_name: str, vocab_dict: dict,
+def save_episode_to_db(episode: Episode, series_id: str, collection_name: str, vocab_dict: dict, img_ref: str,
                        db) -> DocumentReference:
     episode.add_vocab_count_to_episode(vocab_dict)
     episode_dict = episode.to_dict()
     episode_dict_camel_case = _convert_keys_to_camel_case(episode_dict)
+    episode_dict_camel_case['imgRef'] = img_ref
     series_ref = db.collection(collection_name).document(series_id)
     series_ref.update({
         'episodeDetails': ArrayUnion([episode_dict_camel_case])
@@ -89,3 +94,11 @@ def vocab_batch_write(vocab_dict_all_levels, new_media_ref, db, series: int = No
     if batch_size > 0:
         batch.commit()
     print('Done saving vocabulary.')
+
+
+def upload_image_to_storage(image_path):
+    blob_name = f'media/{image_path.split("/")[-1]}'
+    bucket = storage.bucket()
+    blob = bucket.blob(blob_name)
+    blob.upload_from_filename(image_path)
+    return blob_name

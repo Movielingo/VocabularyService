@@ -102,6 +102,7 @@ class MediaInfo:
     title: str
     genres: List[MediaGenre]
     translation_language: str
+    img_ref: str
 
 
 @dataclass
@@ -119,6 +120,7 @@ class Episode:
     description: str
     level: MediaLevel
     season: int
+    img_ref: str
     a1_vocab_count: int = 0
     a2_vocab_count: int = 0
     b1_vocab_count: int = 0

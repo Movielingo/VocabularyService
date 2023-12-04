@@ -3,3 +3,4 @@ __pycache__
 .idea
 *.srt
 src/conf/db_serviceAccount.json
+src/data/media
