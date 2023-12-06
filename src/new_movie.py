@@ -1,7 +1,4 @@
-import firebase_admin
 import spacy
-from firebase_admin import credentials
-from firebase_admin import firestore
 
 from src.db_service import save_movie_to_db, save_series_to_db, vocab_batch_write, save_episode_to_db, \
     upload_image_to_storage
@@ -21,13 +18,8 @@ def _get_vocab_all_levels(vocab_dict):
     return vocab_dict_all_levels
 
 
-def extract_save_media(subtitle_file, media_info: [MediaInfo, Episode], collection_name: str, series_ref: str = None):
-    cred = credentials.Certificate('conf/db_serviceAccount.json')
-    firebase_admin.initialize_app(cred, {
-        'storageBucket': 'movielingo-717e0.appspot.com'
-    })
-
-    db = firestore.client()
+def extract_save_media(db, subtitle_file, media_info: [MediaInfo, Episode], collection_name: str, series_ref: str =
+None):
     nlp = spacy.load("en_core_web_sm")
     episode = None
     season = None

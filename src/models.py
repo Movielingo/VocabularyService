@@ -53,6 +53,7 @@ class Vocab:
     word_type: WordType
     sentences: List[VocabSentence]
     voice_url: str
+    translationLanguage: str
 
     def to_dict(self):
         data = self.__dict__
@@ -101,7 +102,7 @@ class MediaInfo:
     is_series: bool
     title: str
     genres: List[MediaGenre]
-    translation_language: str
+    translation_language: [str]
     img_ref: str
 
 
@@ -189,7 +190,7 @@ class Movie(MovieInfo):
         return Movie(description=media_info.description, genres=media_info.genres, title=media_info.title,
                      level=media_info.level, is_series=media_info.is_series,
                      translation_language=media_info.translation_language, length_min=media_info.length_min,
-                     director=media_info.director, release=media_info.release,
+                     director=media_info.director, release=media_info.release, img_ref=media_info.img_ref,
                      a1_vocab_count=len(vocab_dict[WordLevel.A1.value]),
                      a2_vocab_count=len(vocab_dict[WordLevel.A2.value]),
                      b1_vocab_count=len(vocab_dict[WordLevel.B1.value]),

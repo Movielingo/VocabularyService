@@ -72,7 +72,7 @@ def save_episode_to_db(episode: Episode, series_id: str, collection_name: str, v
     return series_ref
 
 
-def vocab_batch_write(vocab_dict_all_levels, new_media_ref, db, series: int = None, episode: int = None):
+def vocab_batch_write(vocab_dict_all_levels, new_media_ref, db, season: int = None, episode: int = None):
     batch = db.batch()
     batch_size = 0
     vocab_collection_ref = new_media_ref.collection('Vocabularies')
@@ -85,8 +85,8 @@ def vocab_batch_write(vocab_dict_all_levels, new_media_ref, db, series: int = No
 
         doc_ref = vocab_collection_ref.document()
         vocab_dict = _convert_keys_to_camel_case(vocab_value.to_dict())
-        if series and episode:
-            vocab_dict['series'] = series
+        if season and episode:
+            vocab_dict['season'] = season
             vocab_dict['episode'] = episode
         batch.set(doc_ref, vocab_dict)
         batch_size += 1

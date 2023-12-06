@@ -58,7 +58,8 @@ def _extract_vocab(unique_words, sentence, timestamp, csrf_words, nlp, inf_contr
             unique_words[csrf_word.level.value][lemma] = Vocab(lemma=lemma, word_type=word_type,
                                                                word_level=csrf_word.level,
                                                                sentences=[vocab_sentence],
-                                                               voice_url=csrf_word.voice_url)
+                                                               voice_url=csrf_word.voice_url,
+                                                               translationLanguage='german')
     return unique_words, lemma_not_found_counter, csrf_not_found_counter
 
 
