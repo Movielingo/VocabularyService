@@ -18,17 +18,20 @@ for further use.
 ### 📦 Installation
 
 1. Clone the repository:
+
    ```bash
    git clone https://github.com/yourusername/VocabularyService.git
    ```
 
 2. Navigate to the project directory:
+
    ```bash
    cd VocabularyService
    ```
 
 3. Install dependencies using Poetry:
    ```bash
+   poetry shell
    poetry install
    python -m spacy download en_core_web_sm
    ```
@@ -38,6 +41,7 @@ for further use.
 1. **Extract Words from Subtitle Files and store movie and vocabularies in firestore**
 
    => adjust all constants (movie title, movie description, ...) before running)
+
    ```bash
    python main.py
    ```
