@@ -1,10 +1,10 @@
 import spacy
 
-from src.db_service import save_movie_to_db, save_series_to_db, vocab_batch_write, save_episode_to_db, \
+from db_service import save_movie_to_db, save_series_to_db, vocab_batch_write, save_episode_to_db, \
     upload_image_to_storage
-from src.models import MediaInfo, MovieInfo, Series, Episode
-from src.subtitle_words import extract_unique_words_subtitles
-from src.word_level_contractions import load_csrf_dict, load_contractions_dict
+from models import MediaInfo, MovieInfo, Series, Episode
+from subtitle_words import extract_unique_words_subtitles
+from word_level_contractions import load_csrf_dict, load_contractions_dict
 
 
 def _get_vocab_all_levels(vocab_dict):

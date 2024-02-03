@@ -1,4 +1,4 @@
-from src.models import WordType
+from models import WordType
 
 
 def get_lemma(sentence, word, nlp):

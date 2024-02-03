@@ -1,7 +1,7 @@
 from firebase_admin import storage
 from google.cloud.firestore import ArrayUnion, DocumentReference
 
-from src.models import Movie, MovieInfo, Series, Episode
+from models import Movie, MovieInfo, Series, Episode
 
 
 def _snake_to_camel(snake_str):
